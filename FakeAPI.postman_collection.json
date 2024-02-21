@@ -1,0 +1,186 @@
+{
+	"info": {
+		"_postman_id": "6062f4fb-3bbe-4d9c-b78a-91ee2c2d9b77",
+		"name": "FakeAPI",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "26381736",
+		"_collection_link": "https://www.postman.com/aviation-operator-14912782/workspace/fakerestapi/collection/26381736-6062f4fb-3bbe-4d9c-b78a-91ee2c2d9b77?action=share&source=collection_link&creator=26381736"
+	},
+	"item": [
+		{
+			"name": "Activities",
+			"item": [
+				{
+					"name": "Create Activity",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// generate random bool\r",
+									"function getRandomBool() {\r",
+									"  return Math.random() < 0.5; // Returns true if random value is less than 0.5, false otherwise\r",
+									"}\r",
+									"pm.collectionVariables.set(\"completed\",getRandomBool())\r",
+									"console.log(getRandomBool())\r",
+									"// generate random id\r",
+									"function generateId() {\r",
+									"  const timestamp = Date.now().toString(10).padStart(8, '0'); // Ensure 8-digit timestamp\r",
+									"  const random = Math.floor(Math.random() * 10000000).toString(10).padStart(2, '0'); // 2-digit random number\r",
+									"  return timestamp + random;\r",
+									"}\r",
+									"pm.collectionVariables.set(\"randomID\",generateId())\r",
+									"console.log(generateId())"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// save id\r",
+									"pm.collectionVariables.set(\"activityID\",JSON.parse(responseBody).id)\r",
+									"\r",
+									"// testcases\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"// check ID\r",
+									"pm.test(\"Check Response contain ID key\", function(){\r",
+									"    pm.expect(JSON.parse(responseBody)).to.have.property('id')\r",
+									"});\r",
+									"pm.test(\"Check Id not null and not undefined\",function(){\r",
+									"    pm.expect(JSON.parse(responseBody).id).to.not.be.equal(null)\r",
+									"     pm.expect(JSON.parse(responseBody).id).to.not.be.equal(undefined)\r",
+									"})\r",
+									"pm.test(\"Check id value as expected\",function(){\r",
+									"    pm.expect(JSON.parse(request.data).id).to.be.equal(JSON.parse(responseBody).id)\r",
+									"})\r",
+									"pm.test(\"Check id is int\",function(){\r",
+									"    pm.expect(typeof JSON.parse(responseBody).id).to.be.equal('number')\r",
+									"    pm.expect(JSON.parse(responseBody).id).to.be.a('number')\r",
+									"})\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "accept",
+								"value": "text/plain; v=1.0",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json; v=1.0",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": 0,\r\n  \"title\": \"{{$randomJobTitle}}\",\r\n  \"dueDate\": \"2024-02-21T18:23:30.057Z\",\r\n  \"completed\": {{completed}}\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseurl}}/api/v1/Activities",
+							"host": [
+								"{{baseurl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"Activities"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Activity",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json; v=1.0",
+								"type": "text"
+							},
+							{
+								"key": "accept",
+								"value": "text/plain; v=1.0",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": 0,\r\n  \"title\": \"string\",\r\n  \"dueDate\": \"2024-02-21T19:02:32.888Z\",\r\n  \"completed\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseurl}}/api/v1/Activities/:id",
+							"host": [
+								"{{baseurl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"Activities",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{activityID}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Users",
+			"item": []
+		},
+		{
+			"name": "Books",
+			"item": []
+		},
+		{
+			"name": "Authors",
+			"item": []
+		},
+		{
+			"name": "CoverPhotos",
+			"item": []
+		}
+	],
+	"variable": [
+		{
+			"key": "completed",
+			"value": ""
+		},
+		{
+			"key": "randomID",
+			"value": ""
+		},
+		{
+			"key": "activityID",
+			"value": ""
+		}
+	]
+}
